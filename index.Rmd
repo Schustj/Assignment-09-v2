@@ -4,6 +4,19 @@ author: "Jonathan Schuster"
 date: "08/10/2020"
 output: html_document
 ---
+ <!-- This initial chunk is loading all of the packages I'll be utilizing for my COVID report. Example, I'll be using the package "choroplethr" to set up choropleth maps as a form of graph. --> 
+
+```{r setup, include=FALSE, echo = FALSE}
+library(tidyverse)
+library(stringr)
+library(choroplethr)
+library(choroplethrMaps)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+knitr::opts_chunk$set(echo = TRUE)
+```
 
  <!-- This chunk is uploading all the databases to my Rmd file. Files are from the CDC. I elected to use two different datasets from the CDC and you'll see below the ways I've elected to manipulate the datasets chosen.   --> 
 
@@ -20,7 +33,7 @@ myData2 <- read_csv("raw_data/Provisional_COVID-19_Death_Counts_by_Place_of_Deat
 
 covid19Data <- myData2 %>% select(`State`, `COVID19 Deaths`) %>% rename(Deaths = `COVID19 Deaths`) %>% group_by(State) %>% filter(State %in% c("Michigan", "Ohio", "Wisconsin", "Minnesota", "Illinois", "Indiana", "Kentucky") & !is.na(`Deaths`)) %>% group_by(State) %>% summarize(Deaths = sum(Deaths))
 
-write.csv(covid19Data,"C:/Users/Jonny/Documents/GitHub/COVID-19/output/Dth_by_state_midwest_coalition_data2.csv", row.names = FALSE)
+write.csv(covid19Data,"C:/Users/Jonny/Documents/GitHub/Assignment-09-v2/output/Dth_by_state_midwest_coalition_data2.csv", row.names = FALSE)
 ```
 
  <!-- Preparing to create a bar plot of death data due to COVID for Midwest Coalition States. I used the States as my x-axis and my total deaths on my y-axis. Geom_col() is telling my ggplot to make a bar graph. Lastly, you'll notice the labs() function and that is to give my graph labels and a title. --> 
@@ -37,7 +50,7 @@ ggplot(covid19Data, aes(State, Deaths)) + geom_col(color = "black", fill = "indi
 
 covid19Data2 <- myData2 %>% select(`State`, `COVID19 Deaths`) %>% rename(Deaths = `COVID19 Deaths`) %>% filter(State %in% c("New Jersey", "Georgia", "Maryland", "Colorado", "Pennsylvania", "Tennessee", "Louisiana") & !is.na(`Deaths`)) %>% group_by(State) %>% summarize(Deaths = sum(Deaths))
 
-write.csv(covid19Data2,"C:/Users/Jonny/Documents/GitHub/COVID-19/output/Dth_by_state_similar_pop_data2.csv", row.names = FALSE)
+write.csv(covid19Data2,"C:/Users/Jonny/Documents/GitHub/Assignment-09-v2/output/Dth_by_state_similar_pop_data2.csv", row.names = FALSE)
 ```
 
 <!-- Preparing to create a bar plot of death data due to COVID for Similar Population States. I used the States as my x-axis and my total deaths on my y-axis. Geom_col() is telling my ggplot to make a bar graph. Lastly, you'll notice the labs() function and that is to give my graph labels and a title. Very similar to my midwest coalition code. --> 
@@ -57,7 +70,7 @@ deathData <- myData %>%
         filter(fips < 57, abbr != "US" & jurisdiction %in% c("Michigan", "Ohio", "Wisconsin", "Minnesota", "Illinois", "Indiana", "Kentucky") & !is.na(fips)) %>%
         summarise(region = str_to_lower(jurisdiction), value = Deaths)
 
-write.csv(deathData,"C:/Users/Jonny/Documents/GitHub/COVID-19/output/deaths_by_state_midwest_coalition.csv", row.names = FALSE)
+write.csv(deathData,"C:/Users/Jonny/Documents/GitHub/Assignment-09-v2/output/deaths_by_state_midwest_coalition.csv", row.names = FALSE)
 
 ```
 
