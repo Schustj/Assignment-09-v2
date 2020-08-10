@@ -1,0 +1,70 @@
+---
+title: "Index"
+author: "Jonathan Schuster"
+date: "08/10/2020"
+output: html_document
+---
+
+ <!-- This chunk is uploading all the databases to my Rmd file. Files are from the CDC. I elected to use two different datasets from the CDC and you'll see below the ways I've elected to manipulate the datasets chosen.   --> 
+
+```{r importing, message = FALSE, echo = FALSE}
+data(state.regions)
+myData <- read_csv("raw_data/US_MAP_DATA.csv", skip = 2)
+myData2 <- read_csv("raw_data/Provisional_COVID-19_Death_Counts_by_Place_of_Death_and_State.csv")
+
+```
+
+ <!-- Manipulating data from myData2 from the CDC to show total deaths due to COVID in Midwest Coalition States. I'm selecting 2 columns that help answer my hypothesis, State and COVID19 Deaths, and renaming COVID19 Deaths to a simpler name "Deaths". After renaming, I'm filtering my data to the Midwest coalition states I've selected for my report. Next, I use group_by() function to change my multiple entries of each state into one entry for each state. I use the summarize function to add all the values of Deaths into one number. Lastly, I'm running a function to remove any NA's that exist in my dataset. You'll notice I'm saving this data into a new folder "output" after I've manipulated it. --> 
+
+```{r data2stuff, message=FALSE, echo=FALSE, warning=FALSE}
+
+covid19Data <- myData2 %>% select(`State`, `COVID19 Deaths`) %>% rename(Deaths = `COVID19 Deaths`) %>% group_by(State) %>% filter(State %in% c("Michigan", "Ohio", "Wisconsin", "Minnesota", "Illinois", "Indiana", "Kentucky") & !is.na(`Deaths`)) %>% group_by(State) %>% summarize(Deaths = sum(Deaths))
+
+write.csv(covid19Data,"C:/Users/Jonny/Documents/GitHub/COVID-19/output/Dth_by_state_midwest_coalition_data2.csv", row.names = FALSE)
+```
+
+ <!-- Preparing to create a bar plot of death data due to COVID for Midwest Coalition States. I used the States as my x-axis and my total deaths on my y-axis. Geom_col() is telling my ggplot to make a bar graph. Lastly, you'll notice the labs() function and that is to give my graph labels and a title. --> 
+
+```{r ggplotcovid, message=FALSE, echo=FALSE, warning=FALSE, out.width = "500px", fig.align='center'}
+
+ggplot(covid19Data, aes(State, Deaths)) + geom_col(color = "black", fill = "indianred2") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(title = "Midwest Coalition States COVID deaths as of Feb-01-2020", x = "State", y = "Deaths") + scale_y_continuous(labels = scales::number_format())
+
+```
+
+ <!-- Manipulating data from myData2 from the CDC to show total deaths due to COVID in similar population States. I'm selecting 2 columns that help answer my hypothesis, State and COVID19 Deaths, and renaming COVID19 Deaths to a simpler name "Deaths". After renaming, I'm filtering my data to the similar population states I've selected for my report. Next, I use group_by() function to change my multiple entries of each state into one entry for each state. I use the summarize function to add all the values of Deaths into one number. Lastly, I'm running a function to remove any NA's that exist in my dataset. You'll notice I'm saving this data into a new folder "output" after I've manipulated it. --> 
+
+```{r data2stuff2, message=FALSE, echo=FALSE, warning=FALSE}
+
+covid19Data2 <- myData2 %>% select(`State`, `COVID19 Deaths`) %>% rename(Deaths = `COVID19 Deaths`) %>% filter(State %in% c("New Jersey", "Georgia", "Maryland", "Colorado", "Pennsylvania", "Tennessee", "Louisiana") & !is.na(`Deaths`)) %>% group_by(State) %>% summarize(Deaths = sum(Deaths))
+
+write.csv(covid19Data2,"C:/Users/Jonny/Documents/GitHub/COVID-19/output/Dth_by_state_similar_pop_data2.csv", row.names = FALSE)
+```
+
+<!-- Preparing to create a bar plot of death data due to COVID for Similar Population States. I used the States as my x-axis and my total deaths on my y-axis. Geom_col() is telling my ggplot to make a bar graph. Lastly, you'll notice the labs() function and that is to give my graph labels and a title. Very similar to my midwest coalition code. --> 
+
+```{r ggplotcovid2, message=FALSE, echo=FALSE, warning=FALSE, out.width = "500px", fig.align='center'}
+
+ggplot(covid19Data2, aes(State, Deaths)) + geom_col(color = "black", fill = "lightblue") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(title = "Similar Population States COVID deaths as of Feb-01-2020", x = "State", y = "Deaths") + scale_y_continuous(labels = scales::number_format())
+
+```
+
+ <!-- In this chunk I am manipulating a data set into Midwest Coalition states and making a choropleth representation. I'm renaming "Total Death" to "Deaths" for simplicity in writing my code. I've filtered my data set into my 7 coalition states and changed the case to lower case with the str_to_lower function on jurisdiction. Lastly, I'm saving this csv into output folder now that I've manipulated the raw data. --> 
+
+```{r tidyup, message=FALSE, echo=FALSE, warning=FALSE}
+
+deathData <- myData %>% 
+        rename(Deaths = "Total Death") %>%
+        filter(fips < 57, abbr != "US" & jurisdiction %in% c("Michigan", "Ohio", "Wisconsin", "Minnesota", "Illinois", "Indiana", "Kentucky") & !is.na(fips)) %>%
+        summarise(region = str_to_lower(jurisdiction), value = Deaths)
+
+write.csv(deathData,"C:/Users/Jonny/Documents/GitHub/COVID-19/output/deaths_by_state_midwest_coalition.csv", row.names = FALSE)
+
+```
+
+ <!-- In this chunk I'm taking my manipulated data and making my choropleth map for Midwest coalition states. I've given the graph a nice title and labeled my legend "Deaths" to give viewers a way to decipher my image. --> 
+
+```{r choropleth, message=FALSE, echo=FALSE, warning=FALSE, out.width = "500px", fig.align='center', fig.cap="**Choropleth 1:** Total Deaths from States in the Midwest Coalition"}
+
+state_choropleth(deathData, title = "Total Deaths due to COVID", legend = "Deaths")
+
+```
