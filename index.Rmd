@@ -44,6 +44,10 @@ ggplot(covid19Data, aes(State, Deaths)) + geom_col(color = "black", fill = "indi
 
 ```
 
+**Description:**
+
+The data used for this graph comes from the CDC. Specifically, https://data.cdc.gov/NCHS/Provisional-COVID-19-Death-Counts-by-Place-of-Deat/uggs-hy5q will take you directly to the data I used. I used the columns "State" and "COVID19 Deaths". Here I was trying to show the total amount of deaths coming from the seven states in the coalition. I'll be comparing to seven states with similar population sizes to the states shown above. Comparing overall deaths to each other to see if the coalition had fewer total deaths compared to states without the coalition. 
+
  <!-- Manipulating data from myData2 from the CDC to show total deaths due to COVID in similar population States. I'm selecting 2 columns that help answer my hypothesis, State and COVID19 Deaths, and renaming COVID19 Deaths to a simpler name "Deaths". After renaming, I'm filtering my data to the similar population states I've selected for my report. Next, I use group_by() function to change my multiple entries of each state into one entry for each state. I use the summarize function to add all the values of Deaths into one number. Lastly, I'm running a function to remove any NA's that exist in my dataset. You'll notice I'm saving this data into a new folder "output" after I've manipulated it. --> 
 
 ```{r data2stuff2, message=FALSE, echo=FALSE, warning=FALSE}
@@ -60,6 +64,10 @@ write.csv(covid19Data2,"C:/Users/Jonny/Documents/GitHub/Assignment-09-v2/output/
 ggplot(covid19Data2, aes(State, Deaths)) + geom_col(color = "black", fill = "lightblue") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + labs(title = "Similar Population States COVID deaths as of Feb-01-2020", x = "State", y = "Deaths") + scale_y_continuous(labels = scales::number_format())
 
 ```
+
+**Description:**
+
+Same dataset as used above. The difference is the seven states I elected to use based on similar populations to the midwest coalition states. I used the same columns to evaluate if more total deaths were seen compared to the coalition states. While a huge discrepancy doesn't exist between the coalition states compared to the noncoalition states it does seem like the coalition did see overall less deaths. 
 
  <!-- In this chunk I am manipulating a data set into Midwest Coalition states and making a choropleth representation. I'm renaming "Total Death" to "Deaths" for simplicity in writing my code. I've filtered my data set into my 7 coalition states and changed the case to lower case with the str_to_lower function on jurisdiction. Lastly, I'm saving this csv into output folder now that I've manipulated the raw data. --> 
 
@@ -81,3 +89,7 @@ write.csv(deathData,"C:/Users/Jonny/Documents/GitHub/Assignment-09-v2/output/dea
 state_choropleth(deathData, title = "Total Deaths due to COVID", legend = "Deaths")
 
 ```
+
+**Description:**
+
+This table uses a different dataset, but it still originates from the CDC. The direct url for this dataset is https://www.cdc.gov/covid-data-tracker/#cases. We used this dataset to make choropleths for Assignment 07. However, I changed the filtering options and manipulated to just show the states I'm interested in. It gives the same data as the other dataset (roughly), but gives a more visual representation for the viewer. I just liked this graph better. 
